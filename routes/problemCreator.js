@@ -5,12 +5,12 @@ const adminMiddleware=require('../userMiddleware/adminAuthMiddleware');
 const userMiddleware=require('../userMiddleware/userAuthMiddleware');
 
 problemRouter.post("/create",adminMiddleware,CreateProblem);//creat
-problemRouter.put("/:id",adminMiddleware,UpdateProblem);//update
-problemRouter.delete("/:id",adminMiddleware,deleteProblem);//delete
+problemRouter.put("/update/:id",adminMiddleware,UpdateProblem);//update
+problemRouter.delete("/delete/:id",adminMiddleware,deleteProblem);//delete
 
- problemRouter.get("/:id",userMiddleware,getProblemById);
-problemRouter.get("/",userMiddleware,getAllProblem);
-problemRouter.get("/user",userMiddleware,getSolvedProblemByUser);
+ problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
+problemRouter.get("/getAllProblem",userMiddleware,getAllProblem);
+problemRouter.get("/ProblemSolvedByUser",userMiddleware,getSolvedProblemByUser);
 problemRouter.get("/submittedProblem",userMiddleware,submittedProblem);
 
 module.exports=problemRouter;

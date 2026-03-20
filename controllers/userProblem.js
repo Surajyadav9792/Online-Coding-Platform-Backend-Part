@@ -169,17 +169,18 @@ const getProblemById = async (req,res)=>{
    }
 }
 
-const getAllProblem=async (req,res)=>{
-   try{
-      const getProblem = await Problem.find({}).select("_id title description tags difficulty");
-      if(getProblem.length==0){
-        return res.status(200).send(getProblem); 
-      }
-   }
-   catch(err){
-         res.status(500).send("Error: "+err);
-   }
-}
+const getAllProblem = async (req, res) => {
+  try {
+
+    const getProblem = await Problem.find({})
+      .select("_id title description tags difficulty");
+
+    res.status(200).json(getProblem);
+
+  } catch (err) {
+    res.status(500).send("Error: " + err);
+  }
+};
 
 const getSolvedProblemByUser=async (req,res)=>{
   try{

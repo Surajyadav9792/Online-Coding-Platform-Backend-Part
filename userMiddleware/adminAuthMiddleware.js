@@ -9,7 +9,7 @@ const adminAuthMiddleware=async(req,res,next) =>{
       if(!token){
         throw new Error ("Token is not present");
       }
-    //It obtain the data from payload and if token is expire thorw the error 
+    //It obtain the data from payload and if token is expire throw the error 
     const payload =jwt.verify(token,process.env.JWT_KEY);
 
     const {_id}=payload;
