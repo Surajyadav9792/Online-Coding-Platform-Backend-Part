@@ -49,11 +49,9 @@ function getQueueEvents() {
 // Map user language input to worker-expected language strings
 const getLanguageId = (lang) => {
   const languageMap = {
-    "c++": "cpp",
-    "java": "java",
-    "javascript": "node",
-    "node": "node",
-    "nodejs": "node",
+    "c++": 54,
+    "java": 62,
+    "javascript": 63
   };
   return languageMap[lang.toLowerCase()] || lang.toLowerCase();
 };

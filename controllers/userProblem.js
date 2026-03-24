@@ -197,21 +197,27 @@ const getSolvedProblemByUser=async (req,res)=>{
          res.status(500).send("Error: "+err);
    }
 }
+//this api show how many time user submit the problem
+const submittedProblem = async (req, res) => {
+  try {
 
-const submittedProblem=async(req,res)=>{
-   try{
-        const userId=req.result._id;
-        const problemId=req.params._id;
+    const userId = req.result._id;
+    const problemId = req.params.problemId;
 
-      const ans=await Submission.find(userId,problemId);
-        if(ans.length==0){
-         res.status(200).send("No Submission is present");
-        }
-      res.status(200).send(ans);
-   }
-   catch(err){
-      res.status(200).send("Internal Server Error ");
-   }
-}
+    const ans = await Submission.find({
+      userId: userId,
+      problemId: problemId
+    });
+
+    if (ans.length === 0) {
+      return res.status(200).send([]);
+    }
+
+    res.status(200).send(ans);
+
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 module.exports={CreateProblem,UpdateProblem,deleteProblem,getProblemById,getAllProblem,getSolvedProblemByUser,submittedProblem};
