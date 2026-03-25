@@ -7,6 +7,7 @@ const authRouter=require('../routes/userAuth');
 const client=require('../config/redis');
 const problemRouter=require('../routes/problemCreator')
 const submitRouter=require('../routes/submit');
+const aiRouter=require('../routes/GemniAi');
 const cors = require("cors");
 
 app.use(cors({
@@ -22,7 +23,7 @@ app.use("/api", runRoute);
 app.use("/user",authRouter);
 app.use("/problem", problemRouter);
 app.use("/submission",submitRouter);
-
+app.use("/ai",aiRouter);
 main()
 .then(async()=>{
     console.log("DB connected");
