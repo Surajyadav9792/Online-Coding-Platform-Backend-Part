@@ -12,7 +12,8 @@ cloudinary.config({
 })
 const generateUploadSignature=async(req,res)=>{
    try{
-    const {problemId,userId}=req.body;
+    const {problemId}=req.params;
+    const userId=req.result._id;
     //verify problem exists
     const problem=await Problem.findById(problemId);
     if(!problem){
