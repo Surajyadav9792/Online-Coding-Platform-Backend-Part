@@ -15,7 +15,7 @@ app.use(cors({
   credentials: true
 }));
 const runRoute =require('../routes/run');
-
+const videoRouter=require('../routes/videoCreator');
 app.use(express.json());//It convert req.body json data in java script object because through the req.body the data is come in json formate and we need in javascript formate same as in case of cookiese
 app.use(cookieParser());
 
@@ -24,6 +24,7 @@ app.use("/user",authRouter);
 app.use("/problem", problemRouter);
 app.use("/submission",submitRouter);
 app.use("/ai",aiRouter);
+app.use('/video',videoRouter);
 main()
 .then(async()=>{
     console.log("DB connected");
