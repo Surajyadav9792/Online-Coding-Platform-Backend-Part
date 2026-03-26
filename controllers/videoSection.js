@@ -127,7 +127,37 @@ const saveVideoMetadata = async (req, res) => {
         res.status(500).json({ error: 'Failed to save video metadata' });
     }
 };
+const deleteVideo = async (req, res) => {
+    try {
 
+        const { videoId } = req.params;
 
-module.exports={generateUploadSignature,saveVideoMetadata}
+        const video = await SolutionVideo.findById(videoId);
+
+        if (!video) {
+            return res.status(404).json({ error: 'Video not found' });
+        }
+
+        // delete from cloudinary
+        await cloudinary.uploader.destroy(
+            video.cloudinaryPublicId,
+            {
+                resource_type: 'video',
+                invalidate: true // by this the video is also deleted from cdn cache because for providing better service most of the time teh video is also prsent in CDN cache
+            }
+        );
+
+        // delete from DB
+        await SolutionVideo.findByIdAndDelete(videoId);
+
+        res.json({ message: 'Video deleted successfully' });
+
+    }
+    catch (error) {
+        console.error('Error deleting video:', error);
+        res.status(500).json({ error: 'failed to delete video' });
+    }
+};
+
+module.exports={generateUploadSignature,saveVideoMetadata,deleteVideo}
 
