@@ -2,7 +2,7 @@ const {getLanguageId,submitBatch, submitoken}=require("../utils/fetch_language_i
 const Problem = require("../model/problem");
 const User=require("../model/user");
 const Submission = require("../model/submission");
-
+const SolutionVideo=require("../model/solutionVideo");
 const CreateProblem=async (req,res)=>{
 
     const {
@@ -46,7 +46,7 @@ const CreateProblem=async (req,res)=>{
 
    }
 
-   await Problem.create({
+    await Problem.create({
         title,
         description,
         difficulty,
@@ -155,14 +155,23 @@ const getProblemById = async (req,res)=>{
    try{
 
      if(!id){
-        return res.status(400).send("Missing ID Field").select("_id title description tags difficulty visibleTestCases startCode"); 
+        return res.status(400).send("Missing ID Field");
       }
-      const getProblem=await Problem.findById(id);
+      const getProblem=await Problem.findById(id).select("_id title description tags difficulty visibleTestCases startCode referenceSolution"); 
+      
       if(!getProblem){
-        return res.status(400).send("Problem is Missing")
+         return res.status(400).send("Problem is Missing")
       }
+   // For getting URL of the viedo
+   const videos=await SolutionVideo.findOne({problemId:id});
+  if(videos){
+      getProblem.secureUrl=secureUrl;
+      getProblem.cloudinaryPublicId= cloudinaryPublicId;
+      getProblem.thumbnailUrl=thumbnailUrl;
+      getProblem.duration= duration;
+  }
 
-       res.status(200).send(getProblem);
+     return res.status(200).send(getProblem);
    }
    catch(err){
          res.status(404).send("Error: "+err);
