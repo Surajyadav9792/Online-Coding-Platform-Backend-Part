@@ -20,13 +20,13 @@ const generateUploadSignature=async(req,res)=>{
         return res.status(404).json({error:'Problem not found'});
     }
     //Generate unique public_id for the video
-    const timestamps=Math.round(new Date().getTime()/1000);
+    const timestamp=Math.round(new Date().getTime()/1000);
     //for making meaningfull publicId we generate it otherwise it is also provide the publicId
-    const publicId=`leetcode-solution/${problemId}/${userId}_${timestamps}`;
+    const publicId=`leetcode-solution/${problemId}/${userId}_${timestamp}`;
 
     //upload parameters
     const uploadParams={
-        timestamp:timestamps,
+        timestamp:timestamp,
         public_id:publicId,
     };
     //Genrate the signature
@@ -37,7 +37,7 @@ const generateUploadSignature=async(req,res)=>{
     //we send it to File Storage System
     res.json({
         signature,
-        timestamps,
+        timestamp,
         public_id:publicId,
         api_key:process.env.CLOUDINARY_API_KEY,
         cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
@@ -45,8 +45,8 @@ const generateUploadSignature=async(req,res)=>{
     });
 
    }catch(error){
-    console.log('Error genratin upload signature:',error);
-    res.status(500).json({error:'Failed to generate upload credntials'})
+    console.log('Error generating upload signature:',error);
+    res.status(500).json({error:'Failed to generate upload credentials'})
    }
 };
 const saveVideoMetadata = async (req, res) => {
@@ -100,7 +100,7 @@ const saveVideoMetadata = async (req, res) => {
 
 
         // create video solution record
-        const viedoSolution = new SolutionVideo({
+        const videoSolution = new SolutionVideo({
             problemId,
             userId,
             cloudinaryPublicId,
@@ -109,16 +109,16 @@ const saveVideoMetadata = async (req, res) => {
             thumbnailUrl
         });
 
-        await viedoSolution.save();
+        await videoSolution.save();
 
 
         res.status(201).json({
             message: "video solution saved successfully",
-            viedoSolution: {
-                id: viedoSolution._id,
-                thumbnailUrl: viedoSolution.thumbnailUrl,
-                duration: viedoSolution.duration,
-                uploadedAt: viedoSolution.createdAt
+            videoSolution: {
+                id: videoSolution._id,
+                thumbnailUrl: videoSolution.thumbnailUrl,
+                duration: videoSolution.duration,
+                uploadedAt: videoSolution.createdAt
             }
         });
 
@@ -131,9 +131,9 @@ const saveVideoMetadata = async (req, res) => {
 const deleteVideo = async (req, res) => {
     try {
 
-        const { videoId } = req.params;
+        const { problemId } = req.params;
 
-        const video = await SolutionVideo.findById(videoId);
+        const video = await SolutionVideo.findOneAndDelete({problemId:problemId});
 
         if (!video) {
             return res.status(404).json({ error: 'Video not found' });
@@ -147,9 +147,6 @@ const deleteVideo = async (req, res) => {
                 invalidate: true // by this the video is also deleted from cdn cache because for providing better service most of the time teh video is also prsent in CDN cache
             }
         );
-
-        // delete from DB
-        await SolutionVideo.findByIdAndDelete(videoId);
 
         res.json({ message: 'Video deleted successfully' });
 

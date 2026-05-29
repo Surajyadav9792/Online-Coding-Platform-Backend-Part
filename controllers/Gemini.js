@@ -148,8 +148,8 @@ TRIGGER: User asks about time/space complexity.
     });
       res.status(201).json({ message:response.text});
     
-     }
-     main();
+     } 
+     await main();
     }
     catch (err) {
     console.log(err.message);

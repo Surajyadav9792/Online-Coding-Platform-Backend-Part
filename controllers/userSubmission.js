@@ -87,7 +87,8 @@ try{
 
  await submittedResult.save();
 
- if(!req.result.problemSolved.includes(problemId)){
+ const hasSolved = req.result.problemSolved.some(id => id.toString() === problemId.toString());
+ if(status === "accepted" && !hasSolved){
     req.result.problemSolved.push(problemId);
     await req.result.save();
  }
