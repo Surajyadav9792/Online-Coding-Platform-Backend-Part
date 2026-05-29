@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../model/user");
-const Redishclient = require("../config/redis");
+const redisClient = require("../config/redis");
 
 const userMiddleware = async (req, res, next) => {
   try {
@@ -26,7 +26,7 @@ const userMiddleware = async (req, res, next) => {
       throw new Error("User Doesn't Exist");
     }
 
-    const isBlocked = await Redishclient.exists(`token:${token}`);
+    const isBlocked = await redisClient.exists(`token:${token}`);
 
     if (isBlocked) {
       throw new Error("Invalid Token");

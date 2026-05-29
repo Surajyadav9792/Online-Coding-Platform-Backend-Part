@@ -2,7 +2,7 @@
 const jwt=require('jsonwebtoken');
 require('dotenv').config();
 const User=require('../model/user');
-const Redishclient=require('../config/redis');
+const redisClient=require('../config/redis');
 const adminAuthMiddleware=async(req,res,next) =>{
     try{
         const {token}=req.cookies;
@@ -17,14 +17,14 @@ const adminAuthMiddleware=async(req,res,next) =>{
         throw new Error("Invalid Token");
     }
     if(payload.role!='admin'){
-        throw new Error("Invalid ttttoken");
+        throw new Error("Access denied. Admin role required.");
     }
     const result = await User.findById(_id);//here we find the user on the basis of Id in model
     if(!result){
          throw new Error("User Doesn't Exist");
     }
     //here we check that user is present in Redis blocklist table
-     const IsBlocked=await Redishclient.exists(`token:${token}`);
+     const IsBlocked=await redisClient.exists(`token:${token}`);
      if(IsBlocked){
        throw new Error("Invalid Token");
      }
