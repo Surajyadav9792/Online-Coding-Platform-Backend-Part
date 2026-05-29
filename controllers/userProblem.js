@@ -143,7 +143,7 @@ const deleteProblem=async(req,res)=>{
         return res.status(400).send("Problem is Missing");
       }
 
-       res.status(400).send("Deleted Successfully");
+       res.status(200).send("Deleted Successfully");
    }
    catch(err){
          res.status(404).send("Error: "+err);
@@ -151,31 +151,45 @@ const deleteProblem=async(req,res)=>{
 }
 
 const getProblemById = async (req,res)=>{
-    const {id}=req.params;
-   try{
+    const {id} = req.params;
 
-     if(!id){
-        return res.status(400).send("Missing ID Field");
-      }
-      const getProblem=await Problem.findById(id).select("_id title description tags difficulty visibleTestCases startCode referenceSolution"); 
-      
-      if(!getProblem){
-         return res.status(400).send("Problem is Missing")
-      }
-   // For getting URL of the viedo
-   const videos=await SolutionVideo.findOne({problemId:id});
-  if(videos){
-      getProblem.secureUrl=secureUrl;
-      getProblem.cloudinaryPublicId= cloudinaryPublicId;
-      getProblem.thumbnailUrl=thumbnailUrl;
-      getProblem.duration= duration;
-  }
+    try {
+        if(!id){
+            return res.status(400).send("Missing ID Field");
+        }
 
-     return res.status(200).send(getProblem);
-   }
-   catch(err){
-         res.status(404).send("Error: "+err);
-   }
+        let selectFields = "_id title description tags difficulty visibleTestCases startCode";
+        const isSolved = req.result && req.result.problemSolved && req.result.problemSolved.some(pId => pId.toString() === id.toString());
+        if (req.result && (req.result.role === 'admin' || isSolved)) {
+            selectFields += " referenceSolution";
+        }
+
+        const getProblem = await Problem.findById(id).select(selectFields);
+
+        if(!getProblem){
+            return res.status(404).send("Problem not found");
+        }
+
+        // video fetch
+        const videos = await SolutionVideo.findOne({ problemId: id });
+
+        let responseData = getProblem.toObject(); // 👈 default
+
+        if(videos){
+            responseData = {
+                ...responseData,
+                secureUrl: videos.secureUrl,
+                cloudinaryPublicId: videos.cloudinaryPublicId,
+                thumbnailUrl: videos.thumbnailUrl,
+                duration: videos.duration,
+            };
+        }
+
+        return res.status(200).send(responseData);
+
+    } catch(err){
+        res.status(500).send("Error: " + err);
+    }
 }
 
 const getAllProblem = async (req, res) => {

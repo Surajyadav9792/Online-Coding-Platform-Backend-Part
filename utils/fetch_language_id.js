@@ -6,26 +6,6 @@ const IORedis = require('ioredis');
 // Redis connection for BullMQ (using ioredis)
 // Uses environment variables if available, otherwise falls back to defaults
 // Note: For production, set REDIS_HOST, REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD in .env
-// const redisConnection = new IORedis({
-//   host: process.env.REDIS_HOST || 'redis-15072.c12.us-east-1-4.ec2.cloud.redislabs.com',
-//   port: Number(process.env.REDIS_PORT) || 15072,
-//   username: process.env.REDIS_USERNAME || 'default',
-//   password: process.env.REDIS_PASSWORD || '9gpSO1axx9Q5QWOKJ3owi0cA9cs8ZAXw',
-//   maxRetriesPerRequest: null,
-//   enableReadyCheck: true,
-//   retryStrategy: (times) => {
-//     const delay = Math.min(times * 50, 2000);
-//     return delay;
-//   },
-//   reconnectOnError: (err) => {
-//     const targetError = 'READONLY';
-//     if (err.message.includes(targetError)) {
-//       return true; // Reconnect on READONLY error
-//     }
-//     return false;
-//   },
-// });
-// ---- Update this block in problemUtility.js ----
 const redisConnection = new IORedis({
   host: '127.0.0.1', // Change from Cloud to Local
   port: 6379,        // Change to default Local port

@@ -1,4 +1,4 @@
-const Redishclient = require("../config/redis");
+const redisClient = require("../config/redis");
 const User=require("../model/user");
 const validate=require("../utils/validator")
 const bcrypt=require('bcrypt');
@@ -26,7 +26,7 @@ const register= async(req,res) =>{
    {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
 
     res.status(201).json({
       user:reply,
@@ -77,9 +77,9 @@ const login=async(req,res)=>{
        {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
 
-    res.status(201).json({
+    res.status(200).json({
       user:reply,
       message:"user login Successfully"
     })
@@ -97,8 +97,8 @@ const logout=async(req,res)=>{
     const {token}=req.cookies;
     const payload=jwt.decode(token);
 
-    await Redishclient.set(`token:${token}`,'Blocked');
-    await Redishclient.expireAt(`token:${token}`,payload.exp);
+    await redisClient.set(`token:${token}`,'Blocked');
+    await redisClient.expireAt(`token:${token}`,payload.exp);
 
     res.cookie("token",null,{expireAt:new Date(Date.now())});
 
@@ -116,6 +116,7 @@ const adminRegister=async(req,res)=>{
      validate(req.body);
 
      req.body.password= await bcrypt.hash(req.body.password,10);
+     req.body.role='admin';
 
      const user=await User.create(req.body);
 
@@ -125,7 +126,7 @@ const adminRegister=async(req,res)=>{
    {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
 
     res.status(201).send("user Registered Successfully");
     }
