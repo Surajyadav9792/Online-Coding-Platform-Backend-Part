@@ -7,8 +7,9 @@ const IORedis = require('ioredis');
 // Uses environment variables if available, otherwise falls back to defaults
 // Note: For production, set REDIS_HOST, REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD in .env
 const redisConnection = new IORedis({
-  host: '127.0.0.1', // Change from Cloud to Local
-  port: 6379,        // Change to default Local port
+  host: process.env.REDIS_HOST || '127.0.0.1', 
+  port: process.env.REDIS_PORT ? Number(process.env.REDIS_PORT) : 6379,
+  password: process.env.REDIS_PASSWORD || undefined,
   maxRetriesPerRequest: null,
   enableReadyCheck: true,
 });
