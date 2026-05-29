@@ -158,12 +158,7 @@ const getProblemById = async (req,res)=>{
             return res.status(400).send("Missing ID Field");
         }
 
-        let selectFields = "_id title description tags difficulty visibleTestCases startCode";
-        const isSolved = req.result && req.result.problemSolved && req.result.problemSolved.some(pId => pId.toString() === id.toString());
-        if (req.result && (req.result.role === 'admin' || isSolved)) {
-            selectFields += " referenceSolution";
-        }
-
+        let selectFields = "_id title description tags difficulty visibleTestCases startCode referenceSolution";
         const getProblem = await Problem.findById(id).select(selectFields);
 
         if(!getProblem){
