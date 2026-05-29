@@ -1,15 +1,16 @@
 
-const { GoogleGenAI }= require("@google/genai");
-const solveDout=async(req,res)=>{
-    try{
-      const { messages ,title,description,testCases,startCode}=req.body;
-        const ai = new GoogleGenAI({apiKey:process.env.Gemni_Api_Key});
-        async function main() {
-        const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents:messages,
-   config: {
-  systemInstruction: `
+const OpenAI = require("openai");
+
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const solveDout = async (req, res) => {
+  try {
+    const { messages, title, description, testCases, startCode } = req.body;
+
+    const systemPrompt = `
 <identity>
 You are AlgoMentor, a DSA tutor embedded inside a coding platform.
 You have ONE job: help the user solve the specific problem loaded below.
@@ -143,17 +144,45 @@ TRIGGER: User asks about time/space complexity.
 4. Never say "As an AI..." or "I'm a language model..."
 5. Always stay encouraging — never make the user feel bad for wrong attempts
 </absolute_rules>
-`
-}
-    });
-      res.status(201).json({ message:response.text});
-    
-     } 
-     await main();
+`;
+
+    // Convert frontend messages format to OpenAI chat format
+    // Frontend sends: [{ role: "user", parts: [{ text: "..." }] }] (Gemini format)
+    // OpenAI expects: [{ role: "user", content: "..." }]
+    const chatMessages = [
+      { role: "system", content: systemPrompt },
+    ];
+
+    if (Array.isArray(messages)) {
+      for (const msg of messages) {
+        const role = msg.role === "model" ? "assistant" : (msg.role || "user");
+        let content = "";
+        if (msg.parts && Array.isArray(msg.parts)) {
+          content = msg.parts.map(p => p.text || "").join("");
+        } else if (typeof msg.content === "string") {
+          content = msg.content;
+        } else if (typeof msg === "string") {
+          content = msg;
+        }
+        if (content) {
+          chatMessages.push({ role, content });
+        }
+      }
     }
-    catch (err) {
-    console.log(err.message);
-     res.status(500).json({message:"Internal error in ChatBot"});
+
+    const response = await openai.chat.completions.create({
+      model: "google/gemini-2.5-flash",
+      messages: chatMessages,
+      max_tokens: 2048,
+    });
+
+    const reply = response.choices[0]?.message?.content || "Sorry, I could not generate a response.";
+    res.status(201).json({ message: reply });
+
+  } catch (err) {
+    console.log("ChatBot Error:", err.message);
+    res.status(500).json({ message: "Internal error in ChatBot" });
   }
-}
-module.exports=solveDout;
+};
+
+module.exports = solveDout;
