@@ -23,8 +23,8 @@ const userSchema=new Schema({
     },
     age:{
         type:Number,
-        minLength:12,
-        maxLength:70
+        min:12,
+        max:70
     },
     role:{              
         type:String,

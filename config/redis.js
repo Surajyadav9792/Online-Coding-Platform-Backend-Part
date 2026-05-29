@@ -1,6 +1,6 @@
 const { createClient } = require('redis');
 require('dotenv').config();
-const Redishclient = createClient({
+const redisClient = createClient({
     username: 'default',
     password:process.env.REDIS_PASSWORD,
     socket: {
@@ -8,4 +8,4 @@ const Redishclient = createClient({
         port:process.env.REDIS_PORT
     }
 });
-module.exports=Redishclient;
+module.exports=redisClient;

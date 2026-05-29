@@ -50,7 +50,7 @@ const submissionSchema = new Schema({
   timestamps: true
 });
 
-submissionSchema.index({indexId:1,problemId:1});
+submissionSchema.index({userId:1,problemId:1});
 
 
 const Submission = mongoose.model('submission',submissionSchema);
