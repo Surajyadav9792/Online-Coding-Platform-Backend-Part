@@ -26,7 +26,7 @@ const register= async(req,res) =>{
    {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
     res.status(201).json({
       user:reply,
@@ -77,7 +77,7 @@ const login=async(req,res)=>{
        {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
     res.status(200).json({
       user:reply,
@@ -100,7 +100,7 @@ const logout=async(req,res)=>{
     await redisClient.set(`token:${token}`,'Blocked');
     await redisClient.expireAt(`token:${token}`,payload.exp);
 
-    res.cookie("token",null,{expireAt:new Date(Date.now())});
+    res.cookie("token",null,{httpOnly:true, secure:true, sameSite:'none', expires:new Date(0)});
 
     res.send("Logged Out Successfully");
   }
@@ -126,7 +126,7 @@ const adminRegister=async(req,res)=>{
    {expiresIn:60*60}
    );
 
-    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'strict'});
+    res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
     res.status(201).send("user Registered Successfully");
     }
