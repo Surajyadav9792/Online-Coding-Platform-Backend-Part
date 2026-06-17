@@ -64,7 +64,7 @@ const submitBatch = async (submission) => {
     // Add each submission as a job to the queue
     const jobs = [];
     for (const sub of submission) {
-      const language = getLanguageId(sub.language || 'node');
+      const language = sub.language || 'node';
       
       // Map Judge0 format to worker format
       const jobData = {

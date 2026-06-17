@@ -44,6 +44,7 @@ try{
  const submissions=problem.hiddenTestCases.map((testcase)=>({
    source_code:code,
    language_id:languageId,
+   language: language,
    stdin:testcase.input,
    expected_output:testcase.output 
  }));
@@ -131,6 +132,7 @@ const runCode = async (req, res) => {
     const submissions = problem.visibleTestCases.map((testcase) => ({
       source_code: code,
       language_id: languageId,
+      language: language,
       stdin: testcase.input,
       expected_output: testcase.output
     }));
