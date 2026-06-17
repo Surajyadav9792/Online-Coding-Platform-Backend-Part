@@ -11,7 +11,7 @@ const aiRouter = require('../routes/GemniAi');
 const cors = require("cors");
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: process.env.FRONTEND_URL || "https://frontend-peach-ten-81.vercel.app",
   credentials: true
 }));
 const videoRouter = require('../routes/videoCreator');
