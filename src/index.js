@@ -18,6 +18,8 @@ const videoRouter = require('../routes/videoCreator');
 app.use(express.json());//It convert req.body json data in java script object because through the req.body the data is come in json formate and we need in javascript formate same as in case of cookiese
 app.use(cookieParser());
 
+// Lightweight ping endpoint for container keep-alive (e.g., UptimeRobot)
+// and pre-emptive frontend wakeup requests during cold starts.
 app.get("/ping", (req, res) => {
   res.status(200).send("pong");
 });
