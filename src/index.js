@@ -15,11 +15,12 @@ app.use(cors({
   credentials: true
 }));
 const videoRouter = require('../routes/videoCreator');
-app.use(express.json());//It convert req.body json data in java script object because through the req.body the data is come in json formate and we need in javascript formate same as in case of cookiese
+const { initJudgeWorker } = require('../utils/judgeWorker');
+
+app.use(express.json());
 app.use(cookieParser());
 
-// Lightweight ping endpoint for container keep-alive (e.g., UptimeRobot)
-// and pre-emptive frontend wakeup requests during cold starts.
+// Lightweight ping endpoint for container keep-alive
 app.get("/ping", (req, res) => {
   res.status(200).send("pong");
 });
@@ -29,11 +30,15 @@ app.use("/problem", problemRouter);
 app.use("/submission", submitRouter);
 app.use("/ai", aiRouter);
 app.use('/video', videoRouter);
+
 main()
   .then(async () => {
     console.log("DB connected");
     await client.connect();
     console.log("Redis connected");
+
+    // Initialize Judge Engine Worker
+    initJudgeWorker();
 
     app.listen(process.env.PORT, () => {
       console.log("Server listening at port : " + process.env.PORT);
