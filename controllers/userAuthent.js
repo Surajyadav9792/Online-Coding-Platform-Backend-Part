@@ -64,13 +64,13 @@ const login=async(req,res)=>{
        const user=await User.findOne({emailId});
 
        if(!user){ 
-        throw new Error("Invalid Email")
+        throw new Error("Email is not registered.")
        }
 
        const match= await bcrypt.compare(password,user.password);
 
        if(!match){
-        throw new Error("Invalid Password");
+        throw new Error("Incorrect password.");
        }
 
        const reply={
