@@ -159,16 +159,16 @@ const getProblemById = async (req,res)=>{
         }
 
         let selectFields = "_id title description tags difficulty visibleTestCases startCode referenceSolution";
-        const getProblem = await Problem.findById(id).select(selectFields);
+        const getProblem = await Problem.findById(id).select(selectFields).lean();
 
         if(!getProblem){
             return res.status(404).send("Problem not found");
         }
 
         // video fetch
-        const videos = await SolutionVideo.findOne({ problemId: id });
+        const videos = await SolutionVideo.findOne({ problemId: id }).lean();
 
-        let responseData = getProblem.toObject(); // 👈 default
+        let responseData = getProblem;
 
         if(videos){
             responseData = {
@@ -180,7 +180,7 @@ const getProblemById = async (req,res)=>{
             };
         }
 
-        return res.status(200).send(responseData);
+        return res.status(200).json(responseData);
 
     } catch(err){
         res.status(500).send("Error: " + err);
@@ -191,7 +191,8 @@ const getAllProblem = async (req, res) => {
   try {
 
     const getProblem = await Problem.find({})
-      .select("_id title description tags difficulty");
+      .select("_id title tags difficulty")
+      .lean();
 
     res.status(200).json(getProblem);
 
