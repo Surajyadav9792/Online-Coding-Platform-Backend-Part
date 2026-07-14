@@ -53,12 +53,12 @@ const login=async(req,res)=>{
     try{
        const {emailId,password}=req.body;
 
-       if(!emailId){ 
-        throw new Error("Invalid Credential")
+       if(!emailId || emailId.trim() === ""){ 
+        throw new Error("Email is required")
        }
 
-       if(!password){ 
-        throw new Error("Invalid Credential")
+       if(!password || password === ""){ 
+        throw new Error("Password is required")
        }
 
        const user=await User.findOne({emailId});
