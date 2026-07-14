@@ -62,23 +62,25 @@ try{
  let status='accepted';
  let errorMessage='';
 
- for(const test of testResult){
-
-   if(test.status_id==3){
-      testCasesPassed++;
-      runtime+=parseFloat(test.time||0);
-      memory=Math.max(memory,test.memory||0);
-   }
-   else if(test.status_id==4){
-      status="error";
-      errorMessage=test.stderr;
-   }
-   else{
-      status="wrong";
-      errorMessage=test.stderr;
-   }
-
- }
+  for(const test of testResult){
+    if(test.status_id == 3){
+       testCasesPassed++;
+       runtime += parseFloat(test.time||0);
+       memory = Math.max(memory, test.memory||0);
+    }
+    else if(test.status_id == 4){
+       status = "wrong";
+       if(!errorMessage) errorMessage = "Wrong Answer";
+    }
+    else if(test.status_id == 5){
+       status = "wrong";
+       if(!errorMessage) errorMessage = "Time Limit Exceeded";
+    }
+    else {
+       status = "error";
+       if(!errorMessage) errorMessage = test.stderr || "Compilation/Runtime Error";
+    }
+  }
 
  submittedResult.status=status;
  submittedResult.testCasesPassed=testCasesPassed;
