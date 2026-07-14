@@ -61,7 +61,8 @@ const login=async(req,res)=>{
         throw new Error("Password is required")
        }
 
-       const user=await User.findOne({emailId});
+       const normalizedEmail = emailId.trim().toLowerCase();
+       const user = await User.findOne({ emailId: normalizedEmail });
 
        if(!user){ 
         throw new Error("Email is not registered.")
