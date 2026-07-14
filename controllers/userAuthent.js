@@ -29,12 +29,21 @@ const register= async(req,res) =>{
     res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
     res.status(201).json({
+      success: true,
       user:reply,
       message:"user Registered Successfully"
     })
     }
     catch(err){
+      // Mongoose duplicate key error (e.g. email already exists)
+      if (err.code === 11000) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists"
+        });
+      }
       res.status(400).json({
+        success: false,
         message: err.message
       });
     }
@@ -80,6 +89,7 @@ const login=async(req,res)=>{
     res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
     res.status(200).json({
+      success: true,
       user:reply,
       message:"user login Successfully"
     })
@@ -87,6 +97,7 @@ const login=async(req,res)=>{
 
     catch(err){
     res.status(401).json({
+      success: false,
       message: err.message
     });
     }
@@ -102,10 +113,11 @@ const logout=async(req,res)=>{
 
     res.cookie("token",null,{httpOnly:true, secure:true, sameSite:'none', expires:new Date(0)});
 
-    res.send("Logged Out Successfully");
+    res.json({ success: true, message: "Logged Out Successfully" });
   }
   catch(err){
     res.status(503).json({
+      success: false,
       message: err.message
     });
   }
@@ -128,10 +140,17 @@ const adminRegister=async(req,res)=>{
 
     res.cookie('token',token,{maxAge:60*60*1000, httpOnly:true, secure:true, sameSite:'none'});
 
-    res.status(201).send("user Registered Successfully");
+    res.status(201).json({ success: true, message: "user Registered Successfully" });
     }
     catch(err){
+      if (err.code === 11000) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already exists"
+        });
+      }
       res.status(400).json({
+        success: false,
         message: err.message
       });
     }
@@ -145,10 +164,11 @@ const deleteProfile=async(req,res) =>{
 
       await Submission.deleteMany({userId});
 
-      res.status(200).send("Deleted Successfully");
+      res.status(200).json({ success: true, message: "Deleted Successfully" });
    }
    catch(err){
     res.status(500).json({
+      success: false,
       message: err.message
     });
    }

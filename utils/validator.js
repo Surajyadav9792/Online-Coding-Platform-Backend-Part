@@ -13,7 +13,7 @@ const validate=(data)=>{
     }
 
     if(!validator.isStrongPassword(data.password)){
-         throw new Error("Weak Password");
+         throw new Error("Password must be at least 8 characters with uppercase, lowercase, number, and symbol");
     }
 
     if(data.firstName.length<3 || data.firstName.length>21){
