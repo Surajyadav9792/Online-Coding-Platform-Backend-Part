@@ -208,7 +208,7 @@ const getSolvedProblemByUser=async (req,res)=>{
    const user=await User.findById(userId).populate({
       path:"problemSolved",
       select:"_id title difficulty tags"
-   });
+   }).lean();
 
     res.status(200).send(user.problemSolved);
   }

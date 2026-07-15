@@ -20,7 +20,9 @@ const userMiddleware = async (req, res, next) => {
       throw new Error("Invalid Token");
     }
 
-    const result = await User.findById(_id);
+    const result = await User.findById(_id)
+      .select('_id firstName emailId role password problemSolved')
+      .lean();
 
     if (!result) {
       throw new Error("User Doesn't Exist");

@@ -9,7 +9,7 @@ const register= async(req,res) =>{
     try{     
      validate(req.body);
 
-     req.body.password= await bcrypt.hash(req.body.password,10);
+     req.body.password= await bcrypt.hash(req.body.password,8);
 
      const user=await User.create(req.body);
 
@@ -128,7 +128,7 @@ const adminRegister=async(req,res)=>{
      try{   
      validate(req.body);
 
-     req.body.password= await bcrypt.hash(req.body.password,10);
+     req.body.password= await bcrypt.hash(req.body.password,8);
      req.body.role='admin';
 
      const user=await User.create(req.body);

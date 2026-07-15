@@ -19,7 +19,7 @@ try{
     return res.status(400).send("Some field is Missing");
  }
 
- const problem=await Problem.findById(problemId);
+ const problem=await Problem.findById(problemId).select("hiddenTestCases").lean();
 
  if(!problem){
    return res.status(404).send("Problem not found");
@@ -127,7 +127,7 @@ const runCode = async (req, res) => {
       language = "c++";
     }
 
-    const problem = await Problem.findById(problemId);
+    const problem = await Problem.findById(problemId).select("visibleTestCases").lean();
 
     const languageId = getLanguageId(language);
 

@@ -19,7 +19,9 @@ const adminAuthMiddleware=async(req,res,next) =>{
     if(payload.role!='admin'){
         throw new Error("Access denied. Admin role required.");
     }
-    const result = await User.findById(_id);//here we find the user on the basis of Id in model
+    const result = await User.findById(_id)
+      .select('_id firstName emailId role password problemSolved')
+      .lean(); //here we find the user on the basis of Id in model
     if(!result){
          throw new Error("User Doesn't Exist");
     }
